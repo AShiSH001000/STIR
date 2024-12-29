@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Twitter Trends Scraper</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 2rem auto; }
+        button { padding: 0.5rem 1rem; margin: 1rem 0; }
+        #results { margin-top: 1rem; }
+        pre { background: #f5f5f5; padding: 1rem; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Twitter Trends Scraper</h1>
+    <button onclick="runScraper()">Click here to run the script</button>
+    <div id="results"></div>
+
+    <script>
+        async function runScraper() {
+            const results = document.getElementById('results');
+            results.innerHTML = 'Fetching trends...';
+    
+            try {
+                const response = await fetch('/scrape');
+                const data = await response.json();
+                console.log("Data received from backend:", data);  // Debug log
+    
+                if (data.status === "success") {
+                    const timestamp = data.timestamp || "Unknown time";
+    
+                    // Extract the first 5 trends directly
+                    const trend1 = data.trends[0] || "No trend available";
+                    const trend2 = data.trends[1] || "No trend available";
+                    const trend3 = data.trends[2] || "No trend available";
+                    const trend4 = data.trends[3] || "No trend available";
+                    const trend5 = data.trends[4] || "No trend available";
+    
+                    // Construct the HTML
+                    let html = `<h2>These are the most happening topics as on ${timestamp}</h2>`;
+                    html += `<ul>`;
+                    html += `<li>- ${trend1}</li>`;
+                    html += `<li>- ${trend2}</li>`;
+                    html += `<li>- ${trend3}</li>`;
+                    html += `<li>- ${trend4}</li>`;
+                    html += `<li>- ${trend5}</li>`;
+                    html += `</ul>`;
+                    html += `<p>The IP address used for this query was ${data.ip_address || "Unknown"}</p>`;
+                    html += `<button onclick="runScraper()">Click here to run the query again</button>`;
+                    results.innerHTML = html;
+                } else {
+                    results.innerHTML = `Error: ${data.error}`;
+                }
+            } catch (error) {
+                console.error("Error in frontend:", error);  // Debug log
+                results.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+       
+</body>
+</html>
